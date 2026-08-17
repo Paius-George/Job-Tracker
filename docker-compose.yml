@@ -1,0 +1,10 @@
+services:
+  linkedin-job-bot:
+    build: .
+    container_name: linkedin-job-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./config.yaml:/app/config.yaml
+      - ./data:/app/data

@@ -1,0 +1,157 @@
+# ==============================================================================
+# LinkedIn Job Alert Bot - Configuration
+# ==============================================================================
+
+# Global Bot Settings
+settings:
+  # Default Discord Webhook URL (can be set here or via DISCORD_WEBHOOK_URL in .env)
+  discord_webhook_url: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+  
+  # How often to check for new jobs (in minutes) when running in daemon mode
+  check_interval_minutes: 15
+  
+  # Delay (in seconds) between individual requests to prevent rate limiting
+  request_delay_seconds: 3.0
+  
+  # Max pages of results to check per search (25 jobs per page, 1 page is usually ideal for past_24h)
+  max_pages_per_search: 2
+  
+  # Automatically fetch full job details (seniority, full description, applicant count, criteria)
+  # Recommended: true for rich alerts & description filtering
+  fetch_job_details: true
+  
+  # SQLite database location to store seen jobs and avoid duplicate alerts
+  database_path: "data/jobs.db"
+  
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  log_level: "INFO"
+
+# Search Profiles & Custom Filters
+# You can define multiple independent search profiles with their own filters and webhooks.
+searches:
+  - name: "🐍 Python Developer (Remote - Junior/Mid)"
+    enabled: true
+    # Optional search-specific webhook override (leave empty to use global webhook):
+    # webhook_url: ""
+    # Optional Discord role ID to ping, e.g., "123456789012345678" -> @role
+    # role_id_to_mention: ""
+    embed_color: "#3776AB" # Python blue
+    
+    # LinkedIn Search Query Parameters
+    keywords: "Python Developer"
+    location: "Remote"
+    date_posted: "past_24h" # Options: past_24h, past_week, past_month, any
+    sort_by: "recent"       # Options: recent (DD), relevant
+    
+    # Workplace Types: remote, hybrid, on_site (leave empty for any)
+    workplace_types:
+      - "remote"
+    
+    # Experience Levels: internship, entry_level, associate, mid_senior, director, executive
+    experience_levels:
+      - "internship"
+      - "entry_level"
+      - "associate"
+      - "mid_senior"
+      
+    # Job Types: full_time, part_time, contract, temporary, internship
+    job_types:
+      - "full_time"
+      - "contract"
+
+    # Custom Matching Filters (applied post-scrape to fine-tune results)
+    filters:
+      # Title MUST contain at least one of these (leave empty to match all)
+      title_must_include:
+        - "Python"
+        - "Backend"
+        - "Django"
+        - "FastAPI"
+        
+      # Title MUST NOT contain any of these keywords (case-insensitive)
+      title_must_exclude:
+        - "Senior"
+        - "Lead"
+        - "Staff"
+        - "Principal"
+        - "Director"
+        - "VP"
+        - "Head of"
+        - "Architect"
+        
+      # Description MUST contain at least one of these (leave empty to skip check)
+      description_must_include: []
+      
+      # Description MUST NOT contain any of these keywords
+      description_must_exclude:
+        - "security clearance required"
+        - "US citizenship required"
+        
+      # Specific companies to whitelist (only match these if list is not empty)
+      companies_include: []
+      
+      # Specific companies to blacklist (ignore posts from these)
+      companies_exclude:
+        - "Revature"
+        - "CyberCoders"
+
+  - name: "🤖 AI & Machine Learning Engineer"
+    enabled: true
+    embed_color: "#10A37F" # OpenAI emerald green
+    keywords: "AI Engineer OR Machine Learning"
+    location: "Worldwide"
+    date_posted: "past_24h"
+    sort_by: "recent"
+    workplace_types:
+      - "remote"
+    experience_levels:
+      - "entry_level"
+      - "associate"
+      - "mid_senior"
+    job_types:
+      - "full_time"
+      - "contract"
+    filters:
+      title_must_include:
+        - "AI"
+        - "Machine Learning"
+        - "LLM"
+        - "ML"
+      title_must_exclude:
+        - "Senior"
+        - "Principal"
+        - "Director"
+      description_must_include: []
+      description_must_exclude: []
+      companies_include: []
+      companies_exclude: []
+
+  - name: "⚛️ React / Frontend Developer"
+    enabled: false # Set to true to activate
+    embed_color: "#61DAFB" # React cyan
+    keywords: "Frontend Developer React"
+    location: "Remote"
+    date_posted: "past_24h"
+    sort_by: "recent"
+    workplace_types:
+      - "remote"
+    experience_levels:
+      - "entry_level"
+      - "associate"
+      - "mid_senior"
+    job_types:
+      - "full_time"
+    filters:
+      title_must_include:
+        - "React"
+        - "Frontend"
+        - "Front-End"
+        - "UI"
+      title_must_exclude:
+        - "Senior"
+        - "Lead"
+        - "Staff"
+      description_must_include: []
+      description_must_exclude: []
+      companies_include: []
+      companies_exclude: []

@@ -1,0 +1,220 @@
+# ==============================================================================
+# LinkedIn Job Alert Bot - Configuration (Cybersecurity & IT - Bucharest Only)
+# ==============================================================================
+
+settings:
+  discord_webhook_url: ""
+  check_interval_minutes: 30
+  request_delay_seconds: 3.0
+  max_pages_per_search: 2
+  fetch_job_details: true
+  database_path: "data/jobs.db"
+  log_level: "INFO"
+
+searches:
+  # ----------------------------------------------------------------------------
+  # 1. Junior Penetration Testing & Ethical Hacking & Security Testing
+  # ----------------------------------------------------------------------------
+  - name: "🛡️ Pentesting & Cybersecurity (Bucharest)"
+    enabled: true
+    embed_color: "#E02424" # Red
+    keywords: 'Cybersecurity OR "Security Analyst" OR "Penetration Tester" OR Pentester OR "Ethical Hacker" OR "Security Engineer"'
+    location: "Bucharest, Romania"
+    date_posted: "past_24h"
+    sort_by: "recent"
+    workplace_types:
+      - "remote"
+      - "hybrid"
+      - "on_site"
+    experience_levels:
+      - "internship"
+      - "entry_level"
+      - "associate"
+    job_types:
+      - "full_time"
+      - "part_time"
+      - "contract"
+      - "internship"
+    filters:
+      location_must_include:
+        - "Bucharest"
+        - "Bucuresti"
+        - "București"
+      title_must_include:
+        - "Cyber"
+        - "Security"
+        - "Pentest"
+        - "Penetration"
+        - "Ethical"
+        - "Vulnerability"
+        - "SecOps"
+        - "Information Security"
+        - "InfoSec"
+      title_must_exclude:
+        - "Senior"
+        - "Lead"
+        - "Staff"
+        - "Principal"
+        - "Manager"
+        - "Director"
+        - "Head of"
+        - "Architect"
+        - "VP"
+      description_must_include: []
+      description_must_exclude: []
+      companies_include: []
+      companies_exclude: []
+
+  # ----------------------------------------------------------------------------
+  # 2. Junior SOC Analyst & Incident Response
+  # ----------------------------------------------------------------------------
+  - name: "🚨 SOC Analyst & Incident Response (Bucharest)"
+    enabled: true
+    embed_color: "#FF5722" # Orange
+    keywords: '"SOC Analyst" OR "Security Operations" OR "Incident Response" OR "Cyber Security Incident" OR "Threat Intelligence" OR "SOC L1"'
+    location: "Bucharest, Romania"
+    date_posted: "past_24h"
+    sort_by: "recent"
+    workplace_types:
+      - "remote"
+      - "hybrid"
+      - "on_site"
+    experience_levels:
+      - "internship"
+      - "entry_level"
+      - "associate"
+    job_types:
+      - "full_time"
+      - "contract"
+      - "internship"
+    filters:
+      location_must_include:
+        - "Bucharest"
+        - "Bucuresti"
+        - "București"
+      title_must_include:
+        - "SOC"
+        - "Security Analyst"
+        - "Incident"
+        - "Threat"
+        - "Operations"
+        - "SIEM"
+        - "L1"
+        - "Tier 1"
+        - "Responder"
+      title_must_exclude:
+        - "Senior"
+        - "Lead"
+        - "Staff"
+        - "Principal"
+        - "Manager"
+        - "Director"
+        - "Head of"
+        - "Architect"
+      description_must_include: []
+      description_must_exclude: []
+      companies_include: []
+      companies_exclude: []
+
+  # ----------------------------------------------------------------------------
+  # 3. Junior DevOps / Cloud / Infrastructure
+  # ----------------------------------------------------------------------------
+  - name: "☁️ Junior DevOps & Cloud (Bucharest)"
+    enabled: true
+    embed_color: "#0284C7" # Sky Blue
+    keywords: 'DevOps OR "Cloud Engineer" OR "System Administrator" OR "Linux Administrator" OR "Infrastructure Engineer"'
+    location: "Bucharest, Romania"
+    date_posted: "past_24h"
+    sort_by: "recent"
+    workplace_types:
+      - "remote"
+      - "hybrid"
+      - "on_site"
+    experience_levels:
+      - "internship"
+      - "entry_level"
+      - "associate"
+    job_types:
+      - "full_time"
+      - "contract"
+      - "internship"
+    filters:
+      location_must_include:
+        - "Bucharest"
+        - "Bucuresti"
+        - "București"
+      title_must_include:
+        - "DevOps"
+        - "Cloud"
+        - "Linux"
+        - "System Administrator"
+        - "SysAdmin"
+        - "Infrastructure"
+        - "Site Reliability"
+        - "SRE"
+        - "Platform"
+      title_must_exclude:
+        - "Senior"
+        - "Lead"
+        - "Staff"
+        - "Principal"
+        - "Manager"
+        - "Director"
+        - "Head of"
+        - "Architect"
+        - "VP"
+      description_must_include: []
+      description_must_exclude: []
+      companies_include: []
+      companies_exclude: []
+
+  # ----------------------------------------------------------------------------
+  # 4. IT Support, Helpdesk & Service Desk (Entry / Junior)
+  # ----------------------------------------------------------------------------
+  - name: "💻 IT Support & Helpdesk (Bucharest)"
+    enabled: true
+    embed_color: "#10B981" # Green
+    keywords: '"IT Support" OR Helpdesk OR "Help Desk" OR "Service Desk" OR "Technical Support" OR "IT Technician" OR "Support Engineer"'
+    location: "Bucharest, Romania"
+    date_posted: "past_24h"
+    sort_by: "recent"
+    workplace_types:
+      - "remote"
+      - "hybrid"
+      - "on_site"
+    experience_levels:
+      - "internship"
+      - "entry_level"
+      - "associate"
+    job_types:
+      - "full_time"
+      - "part_time"
+      - "contract"
+      - "internship"
+    filters:
+      location_must_include:
+        - "Bucharest"
+        - "Bucuresti"
+        - "București"
+      title_must_include:
+        - "Helpdesk"
+        - "Help Desk"
+        - "Support"
+        - "Service Desk"
+        - "Technician"
+        - "IT Specialist"
+        - "IT Assistant"
+        - "Desktop Support"
+        - "Suport Tehnic"
+      title_must_exclude:
+        - "Senior"
+        - "Lead"
+        - "Staff"
+        - "Principal"
+        - "Manager"
+        - "Director"
+        - "Head of"
+      description_must_include: []
+      description_must_exclude: []
+      companies_include: []
+      companies_exclude: []
