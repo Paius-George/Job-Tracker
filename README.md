@@ -1,9 +1,6 @@
 # 🚀 LinkedIn Discord Job Alert Bot
----
 
 [_Versiunea în limba română →_](README.ro.md)
-
----
 
 An automated bot that continuously searches LinkedIn for newly posted jobs matching your custom filters and sends real-time, rich embed alerts directly to your Discord webhook.
 
