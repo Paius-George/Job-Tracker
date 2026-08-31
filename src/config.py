@@ -39,6 +39,12 @@ def load_config(config_path: str = "config.yaml") -> AppConfig:
         fetch_job_details=bool(raw_settings.get("fetch_job_details", True)),
         database_path=raw_settings.get("database_path", "data/jobs.db"),
         log_level=raw_settings.get("log_level", "INFO"),
+        # Phase 3: global junior/internship filtering engine
+        junior_filter_enabled=bool(raw_settings.get("junior_filter_enabled", True)),
+        junior_filter_strict=bool(raw_settings.get("junior_filter_strict", False)),
+        junior_include_keywords=raw_settings.get("junior_include_keywords"),
+        junior_title_exclude_keywords=raw_settings.get("junior_title_exclude_keywords"),
+        junior_description_exclude_keywords=raw_settings.get("junior_description_exclude_keywords"),
     )
 
     searches = []
@@ -53,6 +59,7 @@ def load_config(config_path: str = "config.yaml") -> AppConfig:
             companies_exclude=filters_dict.get("companies_exclude", []) or [],
             location_must_include=filters_dict.get("location_must_include", []) or [],
             location_must_exclude=filters_dict.get("location_must_exclude", []) or [],
+            max_age_hours=filters_dict.get("max_age_hours"),
             min_salary=filters_dict.get("min_salary"),
         )
 
@@ -71,6 +78,8 @@ def load_config(config_path: str = "config.yaml") -> AppConfig:
             job_types=s.get("job_types", []) or [],
             filters=filters,
             max_pages=s.get("max_pages"),
+            platforms=s.get("platforms", ["linkedin", "ejobs", "bestjobs", "hipo", "stagiipebune", "ats", "jobicy", "remoteok", "arbeitnow"])
+            or ["linkedin", "ejobs", "bestjobs", "hipo", "stagiipebune", "ats", "jobicy", "remoteok", "arbeitnow"],
         )
         searches.append(profile)
 

@@ -21,6 +21,8 @@ class JobPost:
     applicants: Optional[str] = None      # e.g. "12 applicants"
     criteria: Dict[str, str] = field(default_factory=dict)
     matched_search_name: Optional[str] = None
+    platform: str = "LinkedIn"
+    platform_icon: Optional[str] = None
 
 @dataclass
 class SearchFilters:
@@ -33,6 +35,7 @@ class SearchFilters:
     companies_exclude: List[str] = field(default_factory=list)
     location_must_include: List[str] = field(default_factory=list)
     location_must_exclude: List[str] = field(default_factory=list)
+    max_age_hours: Optional[float] = None
     min_salary: Optional[float] = None
 
 @dataclass
@@ -52,6 +55,7 @@ class SearchProfile:
     job_types: List[str] = field(default_factory=list) # full_time, part_time, contract, temporary, internship
     filters: SearchFilters = field(default_factory=SearchFilters)
     max_pages: Optional[int] = None
+    platforms: List[str] = field(default_factory=lambda: ["linkedin", "ejobs", "bestjobs", "hipo", "stagiipebune", "ats", "jobicy", "remoteok", "arbeitnow"])
 
 @dataclass
 class BotSettings:
@@ -63,6 +67,12 @@ class BotSettings:
     fetch_job_details: bool = True
     database_path: str = "data/jobs.db"
     log_level: str = "INFO"
+    # --- Phase 3: global junior/internship filtering engine ---
+    junior_filter_enabled: bool = True
+    junior_filter_strict: bool = False           # require include keywords (junior/intern/...)
+    junior_include_keywords: Optional[List[str]] = None
+    junior_title_exclude_keywords: Optional[List[str]] = None
+    junior_description_exclude_keywords: Optional[List[str]] = None
 
 @dataclass
 class AppConfig:

@@ -1,9 +1,13 @@
 # ==============================================================================
-# LinkedIn Job Alert Bot - Configuration (Cybersecurity & IT - Bucharest Only)
+# Job Alert Bot - Configuration (Bucharest Only | Past 30 Minutes | Entry & Mid Support)
+# Platforms: LinkedIn & eJobs.ro (Web Scraping)
 # ==============================================================================
 
 settings:
+  # Keep this empty - set the webhook via DISCORD_WEBHOOK_URL in .env (local)
+  # or as a GitHub Actions secret (free cloud hosting)
   discord_webhook_url: ""
+  # Interval for scanning (30 minutes)
   check_interval_minutes: 30
   request_delay_seconds: 3.0
   max_pages_per_search: 2
@@ -11,16 +15,119 @@ settings:
   database_path: "data/jobs.db"
   log_level: "INFO"
 
+  # --- Phase 3: Global junior/internship filtering engine -------------------
+  # Safety net applied to ALL search profiles (on top of per-profile filters).
+  # junior_filter_enabled: always drop roles with seniority words in the title
+  #   (senior/lead/manager/principal/...) or experience demands like "5+ years"
+  #   in the description.
+  # junior_filter_strict: additionally REQUIRE a junior/intern keyword
+  #   (junior, intern, trainee, stagiu, ...) in the title or description.
+  junior_filter_enabled: true
+  junior_filter_strict: false
+  # junior_include_keywords:            # override the built-in include list
+  #   - "junior"
+  #   - "intern"
+  # junior_title_exclude_keywords:      # override the built-in title excludes
+  #   - "senior"
+  # junior_description_exclude_keywords: # override the built-in description excludes
+  #   - "5+ years"
+
 searches:
   # ----------------------------------------------------------------------------
-  # 1. Junior Penetration Testing & Ethical Hacking & Security Testing
+  # 1. IT Support, Helpdesk & Service Desk (Entry / Mid) - Bucharest
   # ----------------------------------------------------------------------------
-  - name: "🛡️ Pentesting & Cybersecurity (Bucharest)"
+  - name: "💻 IT Support & Helpdesk (Bucharest - Past 30 Min)"
+    enabled: true
+    embed_color: "#10B981" # Green
+    platforms:
+      - "linkedin"
+      - "ejobs"
+      - "bestjobs"
+      - "hipo"
+      - "stagiipebune"
+      - "ats"
+    keywords: '"IT Support" OR Helpdesk OR "Help Desk" OR "Service Desk" OR "Technical Support" OR "IT Technician" OR "Support Engineer" OR "Desktop Support" OR "Suport Tehnic"'
+    location: "Bucharest, Romania"
+    date_posted: "past_30min" # LinkedIn 30min filter (r1800)
+    sort_by: "recent"        # Newest first
+    workplace_types:
+      - "remote"
+      - "hybrid"
+      - "on_site"
+    experience_levels:
+      - "internship"
+      - "entry_level"
+      - "associate"
+      - "mid_senior" # Allowed for mid-level support/helpdesk
+    job_types:
+      - "full_time"
+      - "part_time"
+      - "contract"
+      - "internship"
+    filters:
+      max_age_hours: 0.5 # Strictly within the past 30 minutes
+      location_must_include:
+        - "Bucharest"
+        - "Remote"
+        - "Bucuresti"
+        - "București"
+      location_must_exclude:
+        - "Cluj"
+        - "Brasov"
+        - "Brașov"
+        - "Timisoara"
+        - "Timișoara"
+        - "Iasi"
+        - "Iași"
+        - "Sibiu"
+        - "Craiova"
+        - "Constanta"
+        - "Constanța"
+      title_must_include:
+        - "Helpdesk"
+        - "Help Desk"
+        - "Support"
+        - "Service Desk"
+        - "Technician"
+        - "IT Specialist"
+        - "IT Assistant"
+        - "Desktop Support"
+        - "Suport Tehnic"
+        - "Tier 1"
+        - "Tier 2"
+        - "1st Line"
+        - "2nd Line"
+      title_must_exclude:
+        - "Senior"
+        - "Lead"
+        - "Staff"
+        - "Principal"
+        - "Manager"
+        - "Director"
+        - "Head of"
+        - "Architect"
+        - "VP"
+      description_must_include: []
+      description_must_exclude: []
+      companies_include: []
+      companies_exclude: []
+
+  # ----------------------------------------------------------------------------
+  # 2. Junior Penetration Testing & Cybersecurity (Entry Level) - Bucharest
+  # ----------------------------------------------------------------------------
+  - name: "🛡️ Cybersecurity & Pentesting (Bucharest - Past 30 Min)"
     enabled: true
     embed_color: "#E02424" # Red
-    keywords: 'Cybersecurity OR "Security Analyst" OR "Penetration Tester" OR Pentester OR "Ethical Hacker" OR "Security Engineer"'
+    platforms:
+      - "linkedin"
+      - "ejobs"
+      - "bestjobs"
+      - "hipo"
+      - "stagiipebune"
+      - "ats"
+    keywords: 'Cybersecurity OR "Security Analyst" OR "Penetration Tester" OR Pentester OR "Ethical Hacker" OR "Security Engineer" OR "Vulnerability Analyst" OR "Red Team"'
     location: "Bucharest, Romania"
-    date_posted: "past_24h"
+    date_posted: "past_30min"
     sort_by: "recent"
     workplace_types:
       - "remote"
@@ -36,10 +143,21 @@ searches:
       - "contract"
       - "internship"
     filters:
+      max_age_hours: 0.5 # Strictly within the past 30 minutes
       location_must_include:
         - "Bucharest"
+        - "Remote"
         - "Bucuresti"
         - "București"
+      location_must_exclude:
+        - "Cluj"
+        - "Brasov"
+        - "Brașov"
+        - "Timisoara"
+        - "Timișoara"
+        - "Iasi"
+        - "Iași"
+        - "Sibiu"
       title_must_include:
         - "Cyber"
         - "Security"
@@ -66,14 +184,21 @@ searches:
       companies_exclude: []
 
   # ----------------------------------------------------------------------------
-  # 2. Junior SOC Analyst & Incident Response
+  # 3. Junior SOC Analyst & Incident Response (Entry Level) - Bucharest
   # ----------------------------------------------------------------------------
-  - name: "🚨 SOC Analyst & Incident Response (Bucharest)"
+  - name: "🚨 SOC Analyst & Incident Response (Bucharest - Past 30 Min)"
     enabled: true
     embed_color: "#FF5722" # Orange
+    platforms:
+      - "linkedin"
+      - "ejobs"
+      - "bestjobs"
+      - "hipo"
+      - "stagiipebune"
+      - "ats"
     keywords: '"SOC Analyst" OR "Security Operations" OR "Incident Response" OR "Cyber Security Incident" OR "Threat Intelligence" OR "SOC L1"'
     location: "Bucharest, Romania"
-    date_posted: "past_24h"
+    date_posted: "past_30min"
     sort_by: "recent"
     workplace_types:
       - "remote"
@@ -88,10 +213,21 @@ searches:
       - "contract"
       - "internship"
     filters:
+      max_age_hours: 0.5 # Strictly within the past 30 minutes
       location_must_include:
         - "Bucharest"
+        - "Remote"
         - "Bucuresti"
         - "București"
+      location_must_exclude:
+        - "Cluj"
+        - "Brasov"
+        - "Brașov"
+        - "Timisoara"
+        - "Timișoara"
+        - "Iasi"
+        - "Iași"
+        - "Sibiu"
       title_must_include:
         - "SOC"
         - "Security Analyst"
@@ -117,14 +253,21 @@ searches:
       companies_exclude: []
 
   # ----------------------------------------------------------------------------
-  # 3. Junior DevOps / Cloud / Infrastructure
+  # 4. Junior QA Tester / Software Testing (Entry Level & Internship) - Bucharest
   # ----------------------------------------------------------------------------
-  - name: "☁️ Junior DevOps & Cloud (Bucharest)"
+  - name: "🧪 Junior QA Tester & Software Testing (Bucharest - Past 30 Min)"
     enabled: true
     embed_color: "#0284C7" # Sky Blue
-    keywords: 'DevOps OR "Cloud Engineer" OR "System Administrator" OR "Linux Administrator" OR "Infrastructure Engineer"'
+    platforms:
+      - "linkedin"
+      - "ejobs"
+      - "bestjobs"
+      - "hipo"
+      - "stagiipebune"
+      - "ats"
+    keywords: '"QA Tester" OR "QA Engineer" OR "Test Engineer" OR "Software Tester" OR "Manual Tester" OR "QA Intern" OR "Testing Intern"'
     location: "Bucharest, Romania"
-    date_posted: "past_24h"
+    date_posted: "past_30min"
     sort_by: "recent"
     workplace_types:
       - "remote"
@@ -139,20 +282,28 @@ searches:
       - "contract"
       - "internship"
     filters:
+      max_age_hours: 0.5 # Strictly within the past 30 minutes
       location_must_include:
         - "Bucharest"
+        - "Remote"
         - "Bucuresti"
         - "București"
+      location_must_exclude:
+        - "Cluj"
+        - "Brasov"
+        - "Brașov"
+        - "Timisoara"
+        - "Timișoara"
+        - "Iasi"
+        - "Iași"
+        - "Sibiu"
       title_must_include:
-        - "DevOps"
-        - "Cloud"
-        - "Linux"
-        - "System Administrator"
-        - "SysAdmin"
-        - "Infrastructure"
-        - "Site Reliability"
-        - "SRE"
-        - "Platform"
+        - "QA"
+        - "Tester"
+        - "Testing"
+        - "Test Engineer"
+        - "Quality Assurance"
+        - "Quality Engineer"
       title_must_exclude:
         - "Senior"
         - "Lead"
@@ -162,58 +313,6 @@ searches:
         - "Director"
         - "Head of"
         - "Architect"
-        - "VP"
-      description_must_include: []
-      description_must_exclude: []
-      companies_include: []
-      companies_exclude: []
-
-  # ----------------------------------------------------------------------------
-  # 4. IT Support, Helpdesk & Service Desk (Entry / Junior)
-  # ----------------------------------------------------------------------------
-  - name: "💻 IT Support & Helpdesk (Bucharest)"
-    enabled: true
-    embed_color: "#10B981" # Green
-    keywords: '"IT Support" OR Helpdesk OR "Help Desk" OR "Service Desk" OR "Technical Support" OR "IT Technician" OR "Support Engineer"'
-    location: "Bucharest, Romania"
-    date_posted: "past_24h"
-    sort_by: "recent"
-    workplace_types:
-      - "remote"
-      - "hybrid"
-      - "on_site"
-    experience_levels:
-      - "internship"
-      - "entry_level"
-      - "associate"
-    job_types:
-      - "full_time"
-      - "part_time"
-      - "contract"
-      - "internship"
-    filters:
-      location_must_include:
-        - "Bucharest"
-        - "Bucuresti"
-        - "București"
-      title_must_include:
-        - "Helpdesk"
-        - "Help Desk"
-        - "Support"
-        - "Service Desk"
-        - "Technician"
-        - "IT Specialist"
-        - "IT Assistant"
-        - "Desktop Support"
-        - "Suport Tehnic"
-      title_must_exclude:
-        - "Senior"
-        - "Lead"
-        - "Staff"
-        - "Principal"
-        - "Manager"
-        - "Director"
-        - "Head of"
       description_must_include: []
       description_must_exclude: []
       companies_include: []

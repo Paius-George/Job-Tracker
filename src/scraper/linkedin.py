@@ -1,11 +1,13 @@
 import time
 import random
 import logging
+import datetime
 import urllib.parse
 from typing import List, Optional, Tuple
 import requests
 from bs4 import BeautifulSoup
 
+from src.scraper.base import BaseScraper
 from src.scraper.models import JobPost, SearchProfile, SearchFilters
 from src.utils import get_random_user_agent, clean_text
 
@@ -47,6 +49,11 @@ JOB_TYPE_MAP = {
 }
 
 DATE_POSTED_MAP = {
+    "past_30min": "r1800",
+    "30min": "r1800",
+    "past_hour": "r3600",
+    "1h": "r3600",
+    "hour": "r3600",
     "past_24h": "r86400",
     "24h": "r86400",
     "past_week": "r604800",
@@ -56,8 +63,48 @@ DATE_POSTED_MAP = {
 }
 
 
-class LinkedInScraper:
+def _parse_age_hours(post_date: Optional[str], post_text: Optional[str]) -> Optional[float]:
+    """Estimate the posting age in hours from the available timestamp data.
+
+    Prefers the exact ISO timestamp from the <time datetime="..."> attribute
+    and falls back to parsing relative text like '15 minutes ago'.
+    Returns None when the age cannot be determined.
+    """
+    if post_date:
+        try:
+            posted = datetime.datetime.fromisoformat(str(post_date).strip().replace("Z", "+00:00"))
+            if posted.tzinfo is None:
+                # LinkedIn guest cards expose UTC timestamps without tz info
+                posted = posted.replace(tzinfo=datetime.timezone.utc)
+            age = datetime.datetime.now(datetime.timezone.utc) - posted
+            return max(age.total_seconds() / 3600.0, 0.0)
+        except ValueError:
+            pass
+
+    if post_text:
+        text = post_text.lower().strip()
+        import re
+        if re.search(r"\d+\s*minute", text):
+            match = re.search(r"(\d+)\s*minute", text)
+            if match:
+                return int(match.group(1)) / 60.0
+        if re.search(r"\d+\s*hour", text):
+            match = re.search(r"(\d+)\s*hour", text)
+            if match:
+                return float(int(match.group(1)))
+        # Any larger unit immediately exceeds a 30 minute window
+        for unit in ("day", "week", "month", "year"):
+            if unit in text:
+                return 10000.0
+    return None
+
+
+class LinkedInScraper(BaseScraper):
     """Scrapes LinkedIn public guest job postings without requiring credentials."""
+
+    platform_name = "LinkedIn"
+    platform_code = "linkedin"
+    platform_icon = "https://cdn-icons-png.flaticon.com/512/3536/3536505.png"
 
     BASE_SEARCH_URL = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
     BASE_DETAIL_URL = "https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{}"
@@ -222,6 +269,8 @@ class LinkedInScraper:
                 workplace_type=workplace_type,
                 salary=salary,
                 matched_search_name=matched_search_name,
+                platform=self.platform_name,
+                platform_icon=self.platform_icon,
             )
             jobs.append(job)
 
@@ -350,13 +399,19 @@ class LinkedInScraper:
             if not matched_loc:
                 return False, f"Location '{job.location}' does not match required locations: {filters.location_must_include}"
 
-        # 7. Description exclusion check
+        # 7. Post age freshness check (e.g. last 30 minutes)
+        if filters.max_age_hours is not None:
+            age_hours = _parse_age_hours(job.post_date, job.post_text)
+            if age_hours is not None and age_hours > filters.max_age_hours:
+                return False, f"Job was posted {age_hours:.1f}h ago (max allowed: {filters.max_age_hours}h)"
+
+        # 8. Description exclusion check
         if job.description and filters.description_must_exclude:
             for exc in filters.description_must_exclude:
                 if exc.lower() in desc_lower:
                     return False, f"Description contains excluded term: '{exc}'"
 
-        # 8. Description inclusion check
+        # 9. Description inclusion check
         if job.description and filters.description_must_include:
             matched_desc = any(inc.lower() in desc_lower for inc in filters.description_must_include)
             if not matched_desc:

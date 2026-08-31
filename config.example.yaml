@@ -26,6 +26,23 @@ settings:
   # Log level: DEBUG, INFO, WARNING, ERROR
   log_level: "INFO"
 
+  # --- Phase 3: Global junior/internship filtering engine -------------------
+  # Safety net applied to ALL search profiles (on top of per-profile filters).
+  # Always drops roles with seniority words in the title (senior/lead/manager/
+  # principal/...) or experience demands like "5+ years" in the description.
+  junior_filter_enabled: true
+  # Strict mode additionally REQUIRES a junior/intern keyword in title/description
+  junior_filter_strict: false
+  # Override the built-in keyword lists if desired:
+  # junior_include_keywords:
+  #   - "junior"
+  #   - "intern"
+  #   - "trainee"
+  # junior_title_exclude_keywords:
+  #   - "senior"
+  # junior_description_exclude_keywords:
+  #   - "5+ years"
+
 # Search Profiles & Custom Filters
 # You can define multiple independent search profiles with their own filters and webhooks.
 searches:

@@ -12,6 +12,10 @@ permissions:
 jobs:
   check-jobs:
     runs-on: ubuntu-latest
+    timeout-minutes: 15 # Don't burn minutes if a scrape hangs
+    concurrency:
+      group: job-monitor # Never run two scans in parallel (avoids DB push conflicts)
+      cancel-in-progress: false
 
     steps:
       - name: 📥 Checkout Repository
@@ -39,4 +43,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add data/jobs.db
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update job database [skip ci]" && git push)
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No new jobs since last run - nothing to commit."
+          else
+            git commit -m "Auto-update job database [skip ci]"
+            git pull --rebase origin main || git pull --rebase
+            git push
+          fi

@@ -52,7 +52,8 @@ class DiscordNotifier:
         if job.applicants:
             fields.append({"name": "👥 Applicants", "value": job.applicants, "inline": True})
 
-        # Matched Search Name
+        # Matched Search Name & Source
+        fields.append({"name": "🏢 Source", "value": f"**{job.platform or 'LinkedIn'}**", "inline": True})
         fields.append({"name": "🏷️ Matched Filter", "value": f"`{profile.name}`", "inline": True})
 
         # Description snippet
@@ -64,7 +65,7 @@ class DiscordNotifier:
             else:
                 desc_snippet = f"> {clean_desc}\n\n"
 
-        embed_description = f"{desc_snippet}🔗 **[Click here to view & apply on LinkedIn]({job.job_url})**"
+        embed_description = f"{desc_snippet}🔗 **[Click here to view & apply on {job.platform or 'Web'}]({job.job_url})**"
 
         # Author section (Company)
         author = {
@@ -74,6 +75,7 @@ class DiscordNotifier:
         if job.logo_url and job.logo_url.startswith("http"):
             author["icon_url"] = job.logo_url
 
+        footer_icon = job.platform_icon or "https://cdn-icons-png.flaticon.com/512/3536/3536505.png"
         embed = {
             "title": f"📢 {job.title}",
             "url": job.job_url,
@@ -82,8 +84,8 @@ class DiscordNotifier:
             "author": author,
             "fields": fields,
             "footer": {
-                "text": f"LinkedIn Job Alert • {profile.name}",
-                "icon_url": "https://static.licdn.com/aero-v1/sc/h/al2o9zrvเค38p1690w0t",
+                "text": f"{job.platform or 'Job Bot'} • {profile.name}",
+                "icon_url": footer_icon,
             },
             "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         }
@@ -104,8 +106,8 @@ class DiscordNotifier:
         embed = self.build_embed(job, profile)
 
         payload: Dict[str, Any] = {
-            "username": "LinkedIn Job Bot",
-            "avatar_url": "https://cdn-icons-png.flaticon.com/512/3536/3536505.png",
+            "username": f"{job.platform or 'Job'} Alert Bot",
+            "avatar_url": job.platform_icon or "https://cdn-icons-png.flaticon.com/512/3536/3536505.png",
             "embeds": [embed],
         }
 

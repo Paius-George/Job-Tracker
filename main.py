@@ -103,6 +103,54 @@ def cmd_stats(args, config):
         console.print("[dim]No jobs have been notified yet.[/dim]")
 
 
+def cmd_jobs(args, config):
+    """List tracked jobs and their application status."""
+    print_banner()
+    db = JobDatabase(config.settings.database_path)
+
+    statuses = args.status.split(",") if args.status else None
+    jobs = db.get_jobs(statuses=statuses, platform=args.platform, limit=args.limit)
+
+    if not jobs:
+        console.print("[yellow]No tracked jobs found matching the filters.[/yellow]")
+        console.print("[dim]Tip: run 'python main.py scan-once' to discover new listings.[/dim]")
+        return
+
+    status_style = {
+        "NEW": "bold yellow",
+        "APPLIED": "bold cyan",
+        "INTERVIEWING": "bold magenta",
+        "OFFER": "bold green",
+        "REJECTED": "dim red",
+        "HIDDEN": "dim",
+    }
+
+    table = Table(title=f"💼 Tracked Jobs ({len(jobs)})", border_style="cyan")
+    table.add_column("Status", style="bold")
+    table.add_column("Title", style="white")
+    table.add_column("Company", style="cyan")
+    table.add_column("Location", style="yellow")
+    table.add_column("Platform", style="green")
+    table.add_column("Discovered", style="dim")
+    table.add_column("URL", style="blue")
+
+    for job in jobs:
+        status = job["status"]
+        style = status_style.get(status, "white")
+        table.add_row(
+            f"[{style}]{status}[/{style}]",
+            (job["title"] or "—")[:45],
+            (job["company"] or "—")[:25],
+            (job["location"] or "—")[:22],
+            job["platform"] or "?",
+            (job["discovered_at"] or "")[:10],
+            job["url"] or "",
+        )
+
+    console.print(table)
+    console.print("\n[dim]Tip: run 'python main.py scan-once' any time to check for fresh listings.[/dim]")
+
+
 def cmd_reset_db(args, config):
     """Clear database history."""
     print_banner()
@@ -181,6 +229,12 @@ def main():
     sub_reset = subparsers.add_parser("reset-db", help="Clear all stored jobs and scan history")
     sub_reset.add_argument("-y", "--yes", action="store_true", help="Skip confirmation prompt")
 
+    # Command: jobs (list tracked jobs)
+    sub_jobs = subparsers.add_parser("jobs", help="List discovered jobs and their status")
+    sub_jobs.add_argument("--status", default=None, help="Comma-separated status filter (e.g. NEW,APPLIED)")
+    sub_jobs.add_argument("--platform", default=None, help="Filter by platform name (e.g. 'eJobs.ro')")
+    sub_jobs.add_argument("--limit", type=int, default=50, help="Max rows to display (default: 50)")
+
     # Command: validate
     sub_validate = subparsers.add_parser("validate", help="Validate config.yaml and view active search profiles")
 
@@ -203,6 +257,8 @@ def main():
         cmd_scan_once(args, config)
     elif args.command == "test-webhook":
         cmd_test_webhook(args, config)
+    elif args.command == "jobs":
+        cmd_jobs(args, config)
     elif args.command == "stats":
         cmd_stats(args, config)
     elif args.command == "reset-db":
