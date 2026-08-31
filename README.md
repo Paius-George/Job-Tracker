@@ -2,9 +2,10 @@
 
 [_Versiunea în limba română →_](README.ro.md)
 
-An automated bot that continuously searches LinkedIn for newly posted jobs matching your custom filters and sends real-time, rich embed alerts directly to your Discord webhook.
-
 <img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/ac0a7cdb-dd01-4074-8c41-17460eacd5f0" />
+
+
+An automated bot that continuously searches LinkedIn for newly posted jobs matching your custom filters and sends real-time, rich embed alerts directly to your Discord webhook.
 
 ---
 
