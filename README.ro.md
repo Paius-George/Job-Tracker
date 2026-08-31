@@ -1,10 +1,8 @@
 # 🚀 LinkedIn Discord Job Alert Bot
 
----
-
 [_English version →_](README.md)
 
----
+<img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/ac0a7cdb-dd01-4074-8c41-17460eacd5f0" />
 
 Un bot automatizat care monitorizează continuu anunțurile noi de pe LinkedIn conform filtrelor tale personalizate și trimite alerte în timp real, sub formă de embed-uri interactive, direct pe webhook-ul tău de Discord.
 
